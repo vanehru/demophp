@@ -28,6 +28,7 @@ jobs:
       - name: docker build
         run: docker build . --file Dockerfile --tag public.ecr.aws/q5y5m4j7/myphp-app/$env_name:${GITHUB_RUN_NUMBER}
         
+      
       - name: docker push
         run: |
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q5y5m4j7
