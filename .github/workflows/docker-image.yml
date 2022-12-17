@@ -1,0 +1,35 @@
+name: CI to Docker Hub
+
+on:
+  push:
+    branches: 
+      - master
+      - dev
+      
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        
+      - name: Set env BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+        
+      - name: Set env NEED
+        run: |
+          if [[ $BRANCH == 'master' ]]; then
+              echo "env_name=prod" >> "$GITHUB_ENV"
+          elif [[ $BRANCH == 'dev' ]]; then
+              echo "env_name=dev" >> "$GITHUB_ENV"
+          else
+              echo "branch is not listed" >> "$GITHUB_ENV"
+          fi
+      - name: docker build
+        run: docker build . --file Dockerfile --tag public.ecr.aws/q5y5m4j7/myphp-app/$env_name:${GITHUB_RUN_NUMBER}
+        
+      - name: docker push
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q5y5m4j7
+          docker push public.ecr.aws/q5y5m4j7/myphp-app/$env_name:${GITHUB_RUN_NUMBER}
+
