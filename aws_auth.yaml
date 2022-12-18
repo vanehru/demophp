@@ -1,0 +1,5 @@
+  docker:
+    - image: public.ecr.aws/q5y5m4j7/demo/php:1
+      aws_auth:
+        aws_access_key_id: AKIA43VHU2YUGKCLEUPM
+        aws_secret_access_key: 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
