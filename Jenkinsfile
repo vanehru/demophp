@@ -51,27 +51,19 @@ pipeline{
                 
                     stage('docker build'){
                         steps{
-                        sh """docker build -t public.ecr.aws/q5y5m4j7/demo/php/${env_name}:${BUILD_NUMBER} ."""
+                        sh """docker build -t myphp.azurecr.io/demo/${env_name}:${BUILD_NUMBER} ."""
                         }
                     }
 
                     stage('docker push'){
                         steps{
                         sh """
-                        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q5y5m4j7
-                        docker push public.ecr.aws/q5y5m4j7/demo/php/${env_name}:$BUILD_NUMBER 
+                        
+                        docker push myphp.azurecr.io/demo/${env_name}:$BUILD_NUMBER 
                         """
                         }
                     }
 
-                    stage('delete images'){
-
-                        steps{
-                        sh """
-                        docker rmi public.ecr.aws/q5y5m4j7/demo/php/${env_name}:${currentBuild.previousBuild.number} || true
-           
-                        """
-                        }
                     }
                 } 
             }
